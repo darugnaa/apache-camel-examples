@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+    <!-- https://camel.apache.org/using-propertyplaceholder.html -->
+    <bean id="bridgePropertyPlaceholder" class="org.apache.camel.spring.spi.BridgePropertyPlaceholderConfigurer">
+        <property name="location" value="classpath:org/darugna/camel/mqtt/mqtt.properties"/>
+    </bean>
+
+    <bean id="greetingProducer" class="org.darugna.camel.mqtt.GreetingProducerBean" />
+
+    <camelContext xmlns="http://camel.apache.org/schema/spring"
+                  id="ExampleMqttContext">
+      
+        <route id="Publisher1Route">
+            <from uri="timer:helloWorld?period=10s" />
+            <to uri="bean:greetingProducer" />
+            <setHeader headerName="CamelMQTTPublishTopic">
+                <simple>org/darugna/camel/mqtt</simple>
+            </setHeader>
+            trasforma in JSON qui
+            <to uri="mqtt:p1?host={{mqtt.host}}" />
+            <log message="Published payload: ${body} on topic: ${header.CamelMQTTPublishTopic}"
+                 logName="org.darugna.camel.mqtt" />
+        </route>
+
+    
+        <route id="SubscriberRoute">
+            <from uri="mqtt:sub?host=tcp://iot.eclipse.org:1883&amp;subscribeTopicNames=org/darugna/camel/mqtt/#" />
+            <log message="Received: ${body}" />
+        </route>
+                
+    </camelContext>
+
+</beans>
