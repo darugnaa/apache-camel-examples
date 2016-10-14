@@ -1,14 +1,23 @@
 package org.darugna.camel.mqtt.dto;
 
+import com.google.gson.annotations.Expose;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
-
+/**
+ * This is an example class to be marshalled in JSON format.
+ * One of the fields, toStringRepr, is excluded from marshalling.
+ * 
+ * @author alessandro.darugna@gmail.com
+ */
 public class Greeting {
 
+    @Expose
     private String greeting;
+    @Expose
     private LocalDateTime greetingDate;
+    @Expose
     private Map<String,Integer> recipients;
 
     // keep away from marshalling

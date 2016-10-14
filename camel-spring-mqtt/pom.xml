@@ -8,7 +8,7 @@
     <packaging>jar</packaging>
     <version>1.0.0</version>
 
-    <name>Camel Example :: MQTT</name>
+    <name>Camel Example ::Spring :: MQTT</name>
     <url>https://github.com/darugnaa/apache-camel-examples</url>
     <description>Example of a Camel Spring application which publishes data in JSON format using MQTT endpoints.</description>
     
