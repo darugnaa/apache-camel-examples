@@ -10,7 +10,8 @@ jar_) using maven-shade-plugin
 - can be run and debugged inside an IDE
 
 # Instructions
-Standard Maven commands:
+Build with standard Maven commands:
+
     cd camel-spring-mqtt
     mvn clean verify
     java -jar target\camel-spring-mqtt-1.0.0.jar
