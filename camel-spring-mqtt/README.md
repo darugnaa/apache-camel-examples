@@ -1,6 +1,10 @@
 # Camel Example :: Spring :: MQTT
-This example sets up two Camel routes, one for publishing messages and one
-for receiving messages over MQTT.
+This example publishes and receives data in JSON format using the
+[MQTT](https://camel.apache.org/mqtt.html) component of Apache Camel.
+There are two Camel routes, one for publishing messages and one
+for receiving messages over MQTT.  
+A simple POJO is marshalled using [Gson DataFormat]
+(http://camel.apache.org/json.html)
 
 # Application format
 This application is a Java8 console application.
