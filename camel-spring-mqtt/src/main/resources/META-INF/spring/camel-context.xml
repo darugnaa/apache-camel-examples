@@ -12,16 +12,23 @@
 
     <bean id="greetingProducer" class="org.darugna.camel.mqtt.GreetingProducerBean" />
 
+    <bean id="annotationExclusionStrategy" class="org.darugna.camel.mqtt.AnnotationExclusionStrategy" />
+    <bean id="gson" class="org.apache.camel.component.gson.GsonDataFormat">
+        <property name="unmarshalType" value="org.darugna.camel.mqtt.dto.Greeting" />
+        <property name="exclusionStrategies" ref="annotationExclusionStrategy" />
+    </bean>
+    
     <camelContext xmlns="http://camel.apache.org/schema/spring"
                   id="ExampleMqttContext">
       
         <route id="Publisher1Route">
             <from uri="timer:helloWorld?period=10s" />
             <to uri="bean:greetingProducer" />
+            <log message="Produced greeting: ${body}" />
             <setHeader headerName="CamelMQTTPublishTopic">
                 <simple>org/darugna/camel/mqtt</simple>
             </setHeader>
-            trasforma in JSON qui
+            <marshal ref="gson" />
             <to uri="mqtt:p1?host={{mqtt.host}}" />
             <log message="Published payload: ${body} on topic: ${header.CamelMQTTPublishTopic}"
                  logName="org.darugna.camel.mqtt" />

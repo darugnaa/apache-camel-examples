@@ -1,2 +1,5 @@
 # apache-camel-examples
-Join my tour of the desert dunes, without fearing shifting sands or sand storms
+_Join my tour of the desert dunes, without fearing shifting sands or sand storms_
+
+# Examples
+1. [Publish JSON data using MQTT endpoints](camel-spring-mqtt/)

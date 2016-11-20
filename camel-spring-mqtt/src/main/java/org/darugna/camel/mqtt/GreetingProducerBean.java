@@ -28,6 +28,7 @@ public class GreetingProducerBean {
         "Alessandro",
         "Pete",
         "Amit",
+        "Dracula"
     };
     
     public Greeting produce() {
@@ -35,12 +36,11 @@ public class GreetingProducerBean {
         g.setGreetingDateTime(LocalDateTime.now(ZoneOffset.UTC));
         g.setGreeting(GREETINGS[random.nextInt(GREETINGS.length)]);
         
-        IntStream.range(1, 1 + random.nextInt(NAMES.length))
+        IntStream.range(1, 2 + random.nextInt(NAMES.length))
                 .forEach(i -> {
                     g.addRecipient(NAMES[random.nextInt(NAMES.length)], i);
                 });
         
-        log.info("Produced greeting: {}", g);
         return g;
     }
 
