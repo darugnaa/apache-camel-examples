@@ -1,0 +1,4 @@
+camel
+desert
+sand
+oasis
