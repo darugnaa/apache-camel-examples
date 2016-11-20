@@ -6,6 +6,8 @@ for receiving messages over MQTT.
 A simple POJO is marshalled using [Gson DataFormat]
 (http://camel.apache.org/json.html)
 
+**work in progress**
+
 # Application format
 This application is a Java8 console application.
 - uses Spring for configuration

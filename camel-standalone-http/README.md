@@ -5,10 +5,18 @@ This example demonstrates how to build routes using Java DSL, retrieve
 web pages using [HTTP component](https://camel.apache.org/http.html),
 extract data using JSoup library.
 
-To build this project use
+# Application format
+This application is a Java8 console application.
+- uses Java DSL to build routes
+- uses standalone Camel
+- can be run and debugged inside an IDE
 
-    mvn verify
+# Instructions
+Build with standard Maven commands:
 
-To run this project from within Maven use
+    cd camel-standalone-http
+    mvn clean verify
+	mvn exec:java
 
-    mvn exec:java
+Press `CTRL + C` to quit.
+	
