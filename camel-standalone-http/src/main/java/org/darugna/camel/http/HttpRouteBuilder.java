@@ -19,7 +19,8 @@ public class HttpRouteBuilder extends RouteBuilder {
                 .end()
             .convertBodyTo(String.class)  // From StringBuilder to String
             .setHeader(Exchange.FILE_NAME, constant("definitions.txt"))
-            .to("file:data/output?fileExist=Append");
+            .to("file:data/output?fileExist=Append")
+            .log("Finished processing file ${header.CamelFileName}");
         
         
         from("direct:httprequest")
