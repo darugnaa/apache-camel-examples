@@ -8,7 +8,7 @@
     <packaging>jar</packaging>
     <version>1.0.0</version>
 
-    <name>Camel Example :: MQTT</name>
+    <name>Camel Spring :: MQTT</name>
     <url>https://github.com/darugnaa/apache-camel-examples</url>
     <description>Example of a Camel Spring application which publishes data in JSON format using MQTT endpoints.</description>
     
@@ -23,7 +23,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <camel-version>2.17.3</camel-version>
+        <camel-version>2.18.0</camel-version>
     </properties>
 
     <dependencies>
