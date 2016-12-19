@@ -15,6 +15,7 @@
 
     <bean id="peek" class="org.darugna.camel.csv.Peek"/>
     
+    <bean id="stats" class="org.darugna.camel.csv.Stats" />
     <!--
         Start of bundle may fail with message:
         Bundle [...] is waiting for dependencies [(&(dataformat=bindy)(objectClass=org.apache.camel.spi.DataFormatResolver))]
@@ -33,7 +34,6 @@
             <unmarshal>
                 <bindy type="Csv" classType="org.darugna.camel.csv.dto.Company" />
             </unmarshal>
-            <to uri="bean:helper" />
             <log message="The message contains ${body.size} elements"/>
             <multicast>
                 <to uri="seda:stats"/>
@@ -42,6 +42,7 @@
         
         <route id="">
             <from uri="seda:stats" />
+            <to uri="bean:stats" />
         </route>
     </camelContext>
 
