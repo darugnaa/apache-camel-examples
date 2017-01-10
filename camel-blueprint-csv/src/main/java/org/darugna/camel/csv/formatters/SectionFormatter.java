@@ -30,7 +30,11 @@ public class SectionFormatter implements Format<Sector> {
     
     @Override
     public String format(Sector t) throws Exception {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        String sectorString = sectorToString.get(t);
+        if (sectorString == null) {
+            throw new IllegalArgumentException("Cannot format Sector '" + t.toString() + "'");
+        }
+        return sectorString;
     }
 
     @Override

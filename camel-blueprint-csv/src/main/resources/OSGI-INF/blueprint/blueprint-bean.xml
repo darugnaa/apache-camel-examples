@@ -10,10 +10,13 @@
     <cm:property-placeholder persistent-id="org.darugna.camel.csv">
         <cm:default-properties>
             <cm:property name="output.format" value="CSV" />
+            <cm:property name="output.cap" value="50000.0" />
         </cm:default-properties>
     </cm:property-placeholder>
 
     <bean id="peek" class="org.darugna.camel.csv.Peek"/>
+    
+    <bean id="capFilter" class="org.darugna.camel.csv.MarketCapFilter"/>
     
     <bean id="stats" class="org.darugna.camel.csv.Stats" />
     <!--
@@ -28,6 +31,7 @@
                timeout="30000"/> 
     
     <camelContext id="blueprint-bean-context" xmlns="http://camel.apache.org/schema/blueprint">
+        
         <route id="ImportCsv">
             <from uri="file:data/import?moveFailed=error"/>
             <log message="Importing file ${header.CamelFileName}" />
@@ -37,13 +41,46 @@
             <log message="The message contains ${body.size} elements"/>
             <multicast>
                 <to uri="seda:stats"/>
+                <to uri="seda:export"/>
             </multicast>
         </route>
         
-        <route id="">
+        <route id="PrintStats">
             <from uri="seda:stats" />
             <to uri="bean:stats" />
         </route>
+        
+        <route id="ExportToConfigurableFormat">
+            <from uri="seda:export" />
+            <setHeader headerName="MINMARKETCAP">
+                <simple>${properties:output.cap}</simple>
+            </setHeader>
+            <to uri="bean:capFilter" />
+            <choice>
+                <when>
+                    <simple>${properties:output.format} == 'CSV'</simple>
+                    <log message="Export in CSV" />
+                    <marshal>
+                        <bindy type="Csv" classType="org.darugna.camel.csv.dto.Company" />
+                    </marshal>
+                </when>
+                <when>
+                    <simple>${properties:output.format} == 'XML'</simple>
+                    <log message="Export in XML" />
+                </when>
+                <otherwise>
+                    <setBody>
+                        <simple>null</simple>
+                    </setBody>
+                    <log message="Format not recognized: ${properties:output.format}" />
+                </otherwise>
+            </choice>
+            <filter>
+                <simple>${body} != null</simple>
+                <to uri="file:data/export" />
+            </filter>
+        </route>
+        
     </camelContext>
 
 </blueprint>
