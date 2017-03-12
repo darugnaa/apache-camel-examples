@@ -9,8 +9,14 @@
 
     <cm:property-placeholder persistent-id="org.darugna.camel.csv">
         <cm:default-properties>
+            <!--
+                Default values for configuration. Do not edit.
+                Create file etc/org.darugna.camel.csv.cfg with your values, eg:
+                output.format=XML
+                output.cap=197000.56
+            -->
             <cm:property name="output.format" value="CSV" />
-            <cm:property name="output.cap" value="50000.0" />
+            <cm:property name="output.cap" value="89005.6" />
         </cm:default-properties>
     </cm:property-placeholder>
 
@@ -19,6 +25,11 @@
     <bean id="capFilter" class="org.darugna.camel.csv.MarketCapFilter"/>
     
     <bean id="stats" class="org.darugna.camel.csv.Stats" />
+    
+    <bean id="simplifyProcessor" class="org.darugna.camel.csv.SimplifyProcessor"/>
+    
+    <bean id="wrapper" class="org.darugna.camel.csv.RootWrapper" />
+    
     <!--
         Start of bundle may fail with message:
         Bundle [...] is waiting for dependencies [(&(dataformat=bindy)(objectClass=org.apache.camel.spi.DataFormatResolver))]
@@ -28,17 +39,21 @@
     -->
     <reference id="bindy" 
                interface="org.apache.camel.spi.DataFormatResolver"
+               timeout="30000"/>
+    
+    <reference id="jaxb" 
+               interface="org.apache.camel.spi.DataFormatResolver"
                timeout="30000"/> 
     
     <camelContext id="blueprint-bean-context" xmlns="http://camel.apache.org/schema/blueprint">
-        
+    
         <route id="ImportCsv">
             <from uri="file:data/import?moveFailed=error"/>
             <log message="Importing file ${header.CamelFileName}" />
             <unmarshal>
                 <bindy type="Csv" classType="org.darugna.camel.csv.dto.Company" />
             </unmarshal>
-            <log message="The message contains ${body.size} elements"/>
+            <log message="File contains ${body.size} elements"/>
             <multicast>
                 <to uri="seda:stats"/>
                 <to uri="seda:export"/>
@@ -56,17 +71,28 @@
                 <simple>${properties:output.cap}</simple>
             </setHeader>
             <to uri="bean:capFilter" />
+            <log message="Market cap ${header.MINMARKETCAP}: ${body.size} elements" />
+            <!-- Use a different format for exporting -->
+            <to uri="bean:simplifyProcessor" />
             <choice>
                 <when>
                     <simple>${properties:output.format} == 'CSV'</simple>
                     <log message="Export in CSV" />
                     <marshal>
-                        <bindy type="Csv" classType="org.darugna.camel.csv.dto.Company" />
+                        <bindy type="Csv" classType="org.darugna.camel.csv.dto.SimpleCompany" />
                     </marshal>
                 </when>
                 <when>
                     <simple>${properties:output.format} == 'XML'</simple>
                     <log message="Export in XML" />
+                    <!-- Wrap inside an XmlRootElement and add xml estension on output file name -->
+                    <to uri="bean:wrapper" />
+                    <setHeader headerName="CamelFileName">
+                        <simple>${header.CamelFileName}.xml</simple>
+                    </setHeader>
+                    <marshal>
+                        <jaxb contextPath="org.darugna.camel.csv.dto" />
+                    </marshal>
                 </when>
                 <otherwise>
                     <setBody>
@@ -79,6 +105,7 @@
                 <simple>${body} != null</simple>
                 <to uri="file:data/export" />
             </filter>
+            <log message="Export completed" />
         </route>
         
     </camelContext>

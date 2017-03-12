@@ -42,11 +42,11 @@ public class Stats {
         
         Optional<Company> leastMarketCap = companies
                 .stream()
-                .max((c1, c2) -> c1.getMarketCap().compareTo(c2.getMarketCap()));
+                .max((c1, c2) -> c2.getMarketCap().compareTo(c1.getMarketCap()));
         
         LOGGER.info("Market caps range: [{} - {}]",
-                leastMarketCap.get().getMarketCap(),
-                greatestMarketCap.get().getMarketCap());
+                leastMarketCap.get().getMarketCap().toPlainString(),
+                greatestMarketCap.get().getMarketCap().toPlainString());
     }
     
 }

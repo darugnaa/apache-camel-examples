@@ -10,7 +10,7 @@ public class BigDecimalFormatter implements Format<BigDecimal> {
     
     @Override
     public String format(BigDecimal object) throws Exception {
-        return object.toString();
+        return object.toPlainString();
     }
 
     @Override

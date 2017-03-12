@@ -6,7 +6,7 @@
 
     <groupId>org.darugna.camel</groupId>
     <artifactId>camel-blueprint-csv</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <packaging>bundle</packaging>
 
     <name>Camel Blueprint :: CSV</name>
