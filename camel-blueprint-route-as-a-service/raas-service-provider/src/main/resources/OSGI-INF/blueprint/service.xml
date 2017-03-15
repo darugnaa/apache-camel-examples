@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="
+             http://www.osgi.org/xmlns/blueprint/v1.0.0 https://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd
+             http://camel.apache.org/schema/blueprint http://camel.apache.org/schema/blueprint/camel-blueprint.xsd">
+
+    <!-- This creates an OSGi service with declared interface -->
+    <service id="routeAsAService" ref="proxyToRoute"
+             interface="org.darugna.camel.raas.CamelRaas" />
+    
+    <!-- This is a simple bean that will process incoming requests -->
+    <bean id="serviceProcessor" class="org.darugna.camel.raas.impl.ServiceProcessor" />
+    
+    <camelContext xmlns="http://camel.apache.org/schema/blueprint" id="AKAServiceContext">
+  
+        <proxy id="proxyToRoute"
+               serviceInterface="org.darugna.camel.raas.CamelRaas"
+               serviceUrl="direct:start"/>
+
+        <route id="ServiceInvokedRoute">
+            <from uri="direct:start"/>
+            <log message="Camel route started!" />
+            <to uri="bean:serviceProcessor" />
+        </route>
+        
+    </camelContext>
+
+</blueprint>
+
