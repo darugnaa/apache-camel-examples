@@ -12,7 +12,7 @@
     <!-- This is a simple bean that will process incoming requests -->
     <bean id="serviceProcessor" class="org.darugna.camel.raas.impl.ServiceProcessor" />
     
-    <camelContext xmlns="http://camel.apache.org/schema/blueprint" id="AKAServiceContext">
+    <camelContext xmlns="http://camel.apache.org/schema/blueprint" id="RouteServiceContext">
   
         <proxy id="proxyToRoute"
                serviceInterface="org.darugna.camel.raas.CamelRaas"
@@ -20,7 +20,7 @@
 
         <route id="ServiceInvokedRoute">
             <from uri="direct:start"/>
-            <log message="Camel route started!" />
+            <log message="Camel route-as-a-service invoked!" />
             <to uri="bean:serviceProcessor" />
         </route>
         
