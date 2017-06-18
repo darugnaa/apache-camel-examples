@@ -17,7 +17,10 @@
 
     <camelContext id="blueprint-bean-context" xmlns="http://camel.apache.org/schema/blueprint">
 
-        <!-- -->
+        <!-- QUEUE
+            A message is published on a queue every 5 seconds. There are 2
+            distinct consumers. Each message is delivered exactly once.
+        -->
 
         <route id="timerSendToRegularQueue">
             <from uri="timer:stq?period=5s" />
@@ -37,7 +40,13 @@
         </route>
         
         
-        <!-- -->
+        <!-- VIRTUAL TOPIC
+            A message is published on a virtual topic every 13 seconds. There are
+            2 distinct consumers subscribed to 2 different queues.
+            Each message gets cloned from virtual topic to each consumer queue.
+            A pub-sub communication style is achieved, keeping queue characteristics:
+            messages are persisted and processed exactly once.
+        -->
         <route id="timerSendToVirtualTopic">
             <from uri="timer:stvt?period=13s" />
             <to uri="bean:messageGenerator" />
