@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="
+         http://www.osgi.org/xmlns/blueprint/v1.0.0 https://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd
+         http://camel.apache.org/schema/blueprint http://camel.apache.org/schema/blueprint/camel-blueprint.xsd">
+
+    <bean id="messageGenerator"
+          class="org.darugna.camel.virtualtopic.MessageGenerator" />
+
+    <bean id="activemq"
+          class="org.apache.activemq.camel.component.ActiveMQComponent">
+        <property name="brokerURL" value="tcp://127.0.0.1:61616" />
+        <property name="userName" value="admin" />
+        <property name="password" value="admin" />
+    </bean>
+
+    <camelContext id="blueprint-bean-context" xmlns="http://camel.apache.org/schema/blueprint">
+
+        <!-- QUEUE
+            A message is published on a queue every 5 seconds. There are 2
+            distinct consumers. Each message is delivered exactly once.
+        -->
+
+        <route id="timerSendToRegularQueue">
+            <from uri="timer:stq?period=5s" />
+            <to uri="bean:messageGenerator" />
+            <log message="Publishing ${body} on queue RegularQueue" />
+            <to uri="activemq:queue:RegularQueue" />
+        </route>
+        
+        <route id="consumerA">
+            <from uri="activemq:queue:RegularQueue" />
+            <log message="${body} received by consumerA from queue RegularQueue" />
+        </route>
+        
+        <route id="consumerB">
+            <from uri="activemq:queue:RegularQueue" />
+            <log message="${body} received by consumerB from queue RegularQueue" />
+        </route>
+        
+        
+        <!-- VIRTUAL TOPIC
+            A message is published on a virtual topic every 13 seconds. There are
+            2 distinct consumers subscribed to 2 different queues.
+            Each message gets cloned from virtual topic to each consumer queue.
+            A pub-sub communication style is achieved, keeping queue characteristics:
+            messages are persisted and processed exactly once.
+        -->
+        <route id="timerSendToVirtualTopic">
+            <from uri="timer:stvt?period=13s" />
+            <to uri="bean:messageGenerator" />
+            <log message="Publishing ${body} on virtual topic VirtualTopic.VirtualQ" />
+            <to uri="activemq:topic:VirtualTopic.VirtualQ" />
+        </route>
+        
+        <route id="vcA">
+            <from uri="activemq:queue:Consumer.VirtConsumerA.VirtualTopic.VirtualQ" />
+            <log message="${body} received by VirtConsumerA from queue Consumer.VirtConsumerA.VirtualTopic.VirtualQ" />
+        </route>
+        
+        <route id="vcB">
+            <from uri="activemq:queue:Consumer.VirtConsumerB.VirtualTopic.VirtualQ" />
+            <log message="${body} received by VirtConsumerB from queue Consumer.VirtConsumerB.VirtualTopic.VirtualQ" />
+        </route>
+    </camelContext>
+
+</blueprint>
